@@ -14,26 +14,31 @@
 
 
 render_file(_Arg0) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).
 
 decode_file(_Arg0) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).
 
 render_tracks(_A, _B) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).
 
 
 parse_measure(_A) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).
 
 parse_header(_Arg0) ->
-    erlang:error(not_implemented).
+  case _Arg0 of
+    <<"SPLICE", _:64, Version:32/binary, Tempo:32/little-float, Rest/binary>> ->
+      {ok, binary_to_string(Version), Tempo, Rest};
+    Any -> {error, parse_header, Any}
+  end.
+
 
 binary_to_string(_Arg0) ->
-    erlang:error(not_implemented).
+  string:strip(binary_to_list(_Arg0), right, 0).
 
 parse_tracks(_Arg0) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).
 
 render(_Arg0, _Arg1, _Arg2) ->
-    erlang:error(not_implemented).
+  erlang:error(not_implemented).

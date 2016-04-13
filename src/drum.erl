@@ -1,10 +1,10 @@
 %%%-------------------------------------------------------------------
-%%% @author Michaël
-%%% @copyright (C) 2016, <COMPANY>
+%%% @author MichaëlBerthouzoz - Marc Pellet - David Villa
+%%% @copyright (C) 2016
 %%% @doc
 %%%
 %%% @end
-%%% Created : 13. avr. 2016 10:39
+%%% Created : 10. avr. 2016 10:39
 %%%-------------------------------------------------------------------
 -module(drum).
 -author("Michaël").
@@ -83,6 +83,7 @@ get_size([{_, Instr, _ } | Tracks]) ->
     _ -> get_size(Tracks)
   end.
 
+%% Format the float. If 23.0 -> 23, 23.23 -> 23.23
 get_float(Number) ->
   case abs(Number - trunc(Number)) of
     Gap when Gap < 0.0001 -> integer_to_list(trunc(Number));

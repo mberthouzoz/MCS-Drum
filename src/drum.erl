@@ -29,8 +29,8 @@ decode_file(F) ->
   IO = file:read_file(F),
   case IO of
     {ok, Data} ->
-      {ok, Version, Tempo, Rest} = parse_header(Data),
-      {ok, Tracks} = parse_tracks(Rest),
+      {_, Version, Tempo, Rest} = parse_header(Data),
+      {_, Tracks} = parse_tracks(Rest),
       {ok, Version, Tempo, Tracks};
     _ -> IO
   end.
@@ -39,7 +39,7 @@ render_tracks(_T, _Size) ->
   [render_tracks(Elem) || Elem <- _T].
 
 render_tracks({TrackN, Instr, Measure}) ->
-  Prefix = io_lib:format("(~B) ~s\t", [TrackN, Instr]),
+  Prefix = io_lib:format("(~B) ~s \t", [TrackN, Instr]),
   Grid = render_measure(Measure),
   [Prefix, Grid, $\n].
 
@@ -81,7 +81,8 @@ parse_tracks(Data) ->
 
 parse_tracks(Data, Acc) ->
   case Data of
-    << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary, Rest/binary>> ->parse_tracks(Rest,  [{TrackN, binary_to_string(Instr), parse_measure(Measure)} | Acc]);
+    << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary, Rest/binary>> ->
+      parse_tracks(Rest,  [{TrackN, binary_to_string(Instr), parse_measure(Measure)} | Acc]);
     _ -> lists:reverse(Acc)
   end.
 

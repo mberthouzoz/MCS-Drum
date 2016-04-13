@@ -1,0 +1,14 @@
+{application, drum,
+ [
+  {description, "An Erlang drum library"},
+  {vsn, "1"},
+  {modules, [
+             drum
+            ]},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.

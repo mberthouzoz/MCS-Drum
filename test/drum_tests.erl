@@ -127,7 +127,7 @@ render_test_() -> [
         {0, "kick",
           [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 0]]}
       ],
-      Expected = "(0) kick |x---|x---|x---|x---|\n",
+      Expected = "(0) kick \t|x---|x---|x---|x---|\n",
       ?assertEqual(Expected,
         lists:flatten(drum:render_tracks(Tracks, 0)))
     end},
@@ -149,12 +149,12 @@ render_test_() -> [
           [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0]]}
       ],
       Expected =
-        "(0) kick     |x---|x---|x---|x---|\n" ++
-        "(1) snare    |----|x---|----|x---|\n" ++
-        "(2) clap     |----|x-x-|----|----|\n" ++
-        "(3) hh-open  |--x-|--x-|x-x-|--x-|\n" ++
-        "(4) hh-close |x---|x---|----|x--x|\n" ++
-        "(5) cowbell  |----|----|--x-|----|\n",
+        "(0) kick \t|x---|x---|x---|x---|\n" ++
+        "(1) snare \t|----|x---|----|x---|\n" ++
+        "(2) clap \t|----|x-x-|----|----|\n" ++
+        "(3) hh-open \t|--x-|--x-|x-x-|--x-|\n" ++
+        "(4) hh-close \t|x---|x---|----|x--x|\n" ++
+        "(5) cowbell \t|----|----|--x-|----|\n",
       ?assertEqual(Expected,
         lists:flatten(drum:render_tracks(Tracks, 0)))
     end}
@@ -191,43 +191,36 @@ decode_file_test_() -> [
           [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0]]}
       ],
       ?assertEqual({ok, Version, Tempo, Tracks},
-        drum:decode_file(data_dir("drum_pattern_1.splice")))
+        drum:decode_file("../data/drum_pattern_1.splice"))
     end},
   {
     "decode file fail",
     ?_assertMatch({error, parse_header, _},
-      drum:decode_file(data_dir("drum_pattern_1.txt")))
+      drum:decode_file("../data/drum_pattern_1.txt"))
   }
 ].
 
 pattern1_test() ->
-  {ok, Expected} = file:read_file(data_dir("drum_pattern_1.txt")),
-  {ok, Actual} = drum:render_file(data_dir("drum_pattern_1.splice")),
+  {ok, Expected} = file:read_file("../data/drum_pattern_1.txt"),
+  {ok, Actual} = drum:render_file("../data/drum_pattern_1.splice"),
   ?assertEqual(binary_to_list(Expected), lists:flatten(Actual)).
 
 pattern2_test() ->
-  {ok, Expected} = file:read_file(data_dir("drum_pattern_2.txt")),
-  {ok, Actual} = drum:render_file(data_dir("drum_pattern_2.splice")),
+  {ok, Expected} = file:read_file("../data/drum_pattern_2.txt"),
+  {ok, Actual} = drum:render_file("../data/drum_pattern_2.splice"),
   ?assertEqual(binary_to_list(Expected), lists:flatten(Actual)).
 
 pattern3_test() ->
-  {ok, Expected} = file:read_file(data_dir("drum_pattern_3.txt")),
-  {ok, Actual} = drum:render_file(data_dir("drum_pattern_3.splice")),
+  {ok, Expected} = file:read_file("../data/drum_pattern_3.txt"),
+  {ok, Actual} = drum:render_file("../data/drum_pattern_3.splice"),
   ?assertEqual(binary_to_list(Expected), lists:flatten(Actual)).
 
 pattern4_test() ->
-  {ok, Expected} = file:read_file(data_dir("drum_pattern_4.txt")),
-  {ok, Actual} = drum:render_file(data_dir("drum_pattern_4.splice")),
+  {ok, Expected} = file:read_file("../data/drum_pattern_4.txt"),
+  {ok, Actual} = drum:render_file("../data/drum_pattern_4.splice"),
   ?assertEqual(binary_to_list(Expected), lists:flatten(Actual)).
 
 pattern5_test() ->
-  {ok, Expected} = file:read_file(data_dir("drum_pattern_5.txt")),
-  {ok, Actual} = drum:render_file(data_dir("drum_pattern_5.splice")),
+  {ok, Expected} = file:read_file("../data/drum_pattern_5.txt"),
+  {ok, Actual} = drum:render_file("../data/drum_pattern_5.splice"),
   ?assertEqual(binary_to_list(Expected), lists:flatten(Actual)).
-
-% TODO add negative tests!
-
-%% Helper functions.
-
-data_dir(File) ->
-  code:lib_dir(mcs, test) ++ "/data/" ++ File.

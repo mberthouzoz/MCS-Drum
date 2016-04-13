@@ -24,7 +24,10 @@ render_tracks(_A, _B) ->
 
 
 parse_measure(_A) ->
-  erlang:error(not_implemented).
+  case _A of
+    << A:4/binary, B:4/binary, C:4/binary, D:4/binary>> -> [binary_to_list(A),binary_to_list(B), binary_to_list(C), binary_to_list(D)];
+    _ -> {error, parse_measure}
+  end.
 
 parse_header(_Arg0) ->
   case _Arg0 of
@@ -38,7 +41,10 @@ binary_to_string(_Arg0) ->
   string:strip(binary_to_list(_Arg0), right, 0).
 
 parse_tracks(_Arg0) ->
-  erlang:error(not_implemented).
+  case _Arg0 of
+    << TrackN:32, Size:8, Instr:Size/binary, Measure:16/binary>> -> {ok , [{TrackN, binary_to_string(Instr), parse_measure(Measure)}]};
+    _ -> {ok, []}
+  end.
 
 render(_Arg0, _Arg1, _Arg2) ->
   erlang:error(not_implemented).

@@ -41,9 +41,13 @@ render_tracks(_A, _B) ->
 
 
 parse_measure(_A) ->
+  parse_measure(_A, []).
+
+parse_measure(_A, Acc) ->
   case _A of
-    << A:4/binary, B:4/binary, C:4/binary, D:4/binary>> -> [binary_to_list(A),binary_to_list(B), binary_to_list(C), binary_to_list(D)];
-    _ -> {error, parse_measure}
+    << A, B, C, D , Rest/binary>> when A < 2, B <2, C <2, D<2 -> parse_measure(Rest, [[A,B,C,D]| Acc]);
+    << A, B, C, D , _/binary>> -> {parse_measure, bad_value, <<A, B, C, D>> };
+    _ -> lists:reverse(Acc)
   end.
 
 
@@ -60,7 +64,7 @@ binary_to_string(B) ->
 
 parse_tracks(_Arg0) ->
   case _Arg0 of
-    << TrackN:32, Size:8, Instr:Size/binary, Measure:16/binary>> -> {ok , [{TrackN, binary_to_string(Instr), parse_measure(Measure)}]};
+    << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary>> -> {ok , [{TrackN, binary_to_string(Instr), parse_measure(Measure)}]};
     _ -> {ok, []}
   end.
 

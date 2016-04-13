@@ -20,7 +20,7 @@ render_file(F) ->
   IO = decode_file(F),
   case IO of
     {ok, Version, Tempo, Tracks} ->
-      {ok, render(Version, Tempo, Tracks)};
+      render(Version, Tempo, Tracks);
     _ -> IO
   end.
 
@@ -47,18 +47,10 @@ render_tracks({TrackN, Instr, Measure}) ->
 render_measure([P1,P2,P3,P4]) ->
   [$|, conv(P1), $|, conv(P2), $|, conv(P3), $|, conv(P4), $|].
 
-
-%% render_measure(Data, Acc) ->
-%%   case Data of
-%%   [Measure | Rest] -> render_measure(Rest, [[case E of 1 -> "x"; 0-> "-" end || E <- Measure]++"|" | Acc]);
-%%   _ -> lists:reverse(Acc)
-%% end.
-
 conv(Pat) -> [render_c(C) || C <- Pat].
 
 render_c(0) -> $-;
 render_c(1) -> $x.
-
 
 
 parse_measure(Data) ->

@@ -35,7 +35,15 @@ decode_file(F) ->
     _ -> IO
   end.
 
-render_tracks(_T, _Size) ->0.
+render_tracks(_T, _Size) ->
+  case _T of
+    [{TrackN, Instr,_} | Rest] ->
+      io_lib:format("(~s) ~s ~n", [TrackN, Instr]),
+      render_tracks(Rest, _Size);
+    _-> ok
+  end.
+
+
 
 
 

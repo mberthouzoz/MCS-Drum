@@ -64,9 +64,12 @@ binary_to_string(B) ->
 
 
 parse_tracks(Data) ->
+  {ok, parse_tracks(Data, [])}.
+
+parse_tracks(Data, Acc) ->
   case Data of
-    << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary>> -> {ok , [{TrackN, binary_to_string(Instr), parse_measure(Measure)}]};
-    _ -> {ok, []}
+    << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary, Rest/binary>> ->parse_tracks(Rest,  [{TrackN, binary_to_string(Instr), parse_measure(Measure)} | Acc]);
+    _ -> lists:reverse(Acc)
   end.
 
 

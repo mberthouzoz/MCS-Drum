@@ -36,15 +36,28 @@ decode_file(F) ->
   end.
 
 render_tracks(_T, _Size) ->
-  case _T of
-    [{TrackN, Instr,_} | Rest] ->
-      io_lib:format("(~s) ~s ~n", [TrackN, Instr]),
-      render_tracks(Rest, _Size);
-    _-> ok
-  end.
+  [render_tracks(Elem) || Elem <- _T].
+
+render_tracks({TrackN, Instr, Measure}) ->
+  Prefix = io_lib:format("(~B) ~s\t", [TrackN, Instr]),
+  Grid = render_measure(Measure),
+  [Prefix, Grid, $\n].
 
 
+render_measure([P1,P2,P3,P4]) ->
+  [$|, conv(P1), $|, conv(P2), $|, conv(P3), $|, conv(P4), $|].
 
+
+%% render_measure(Data, Acc) ->
+%%   case Data of
+%%   [Measure | Rest] -> render_measure(Rest, [[case E of 1 -> "x"; 0-> "-" end || E <- Measure]++"|" | Acc]);
+%%   _ -> lists:reverse(Acc)
+%% end.
+
+conv(Pat) -> [render_c(C) || C <- Pat].
+
+render_c(0) -> $-;
+render_c(1) -> $x.
 
 
 
@@ -82,7 +95,7 @@ parse_tracks(Data, Acc) ->
 
 
 render(Version, Tempo, Tracks) ->
-  io_lib:format("Saved with HW Version: ~s~nTempo: ~s~n~s",
+  io:format("Saved with HW Version: ~s~nTempo: ~s~n~s",
     [Version, get_float(Tempo), render_tracks(Tracks, get_size(Tracks))]).
 
 

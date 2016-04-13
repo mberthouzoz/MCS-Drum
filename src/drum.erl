@@ -35,8 +35,8 @@ decode_file(F) ->
     _ -> IO
   end.
 
-render_tracks(_A, _B) ->
-    erlang:error(not_implemented).
+render_tracks(_T, _Size) ->0.
+
 
 
 parse_measure(Data) ->
@@ -79,7 +79,7 @@ get_size([{_, Instr, _ } | Tracks]) ->
   end.
 
 get_float(Number) ->
-  case Number - trunc(Number) > 0 of
-    true  -> float_to_list(Number, [{decimals, 3}, compact]);
-    false -> float_to_list(Number, [{decimals, 0}])
+  case abs(Number - trunc(Number)) of
+    Gap when Gap < 0.0001 -> integer_to_list(trunc(Number));
+    _ -> float_to_list(Number, [{decimals, 1}, compact])
   end.

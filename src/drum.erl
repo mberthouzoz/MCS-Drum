@@ -27,7 +27,6 @@ render_file(F) ->
 
 decode_file(F) ->
   IO = file:read_file(F),
-
   case IO of
     {ok, Data} ->
       {ok, Version, Tempo, Rest} = parse_header(Data),
@@ -36,15 +35,16 @@ decode_file(F) ->
     _ -> IO
   end.
 
-render_tracks(_A, _B) ->
-    erlang:error(not_implemented).
+render_tracks(_T, _Size) ->0.
 
 
-parse_measure(_A) ->
-  parse_measure(_A, []).
 
-parse_measure(_A, Acc) ->
-  case _A of
+
+parse_measure(Data) ->
+  parse_measure(Data, []).
+
+parse_measure(Data, Acc) ->
+  case Data of
     << A, B, C, D , Rest/binary>> when A < 2, B <2, C <2, D<2 -> parse_measure(Rest, [[A,B,C,D]| Acc]);
     << A, B, C, D , _/binary>> -> {parse_measure, bad_value, <<A, B, C, D>> };
     _ -> lists:reverse(Acc)
@@ -62,12 +62,29 @@ parse_header(Data) ->
 binary_to_string(B) ->
   string:strip(binary_to_list(B), right, 0).
 
-parse_tracks(_Arg0) ->
-  case _Arg0 of
+
+parse_tracks(Data) ->
+  case Data of
     << TrackN:32/little, Size:8, Instr:Size/binary, Measure:16/binary>> -> {ok , [{TrackN, binary_to_string(Instr), parse_measure(Measure)}]};
     _ -> {ok, []}
   end.
 
 
-render(_Arg0, _Arg1, _Arg2) ->
-    erlang:error(not_implemented).
+render(Version, Tempo, Tracks) ->
+  io_lib:format("Saved with HW Version: ~s~nTempo: ~s~n~s",
+    [Version, get_float(Tempo), render_tracks(Tracks, get_size(Tracks))]).
+
+
+%% Get size for padding, if the first letter is capitalized -> 2 else 0
+get_size([]) -> 0;
+get_size([{_, Instr, _ } | Tracks]) ->
+  case Instr of
+    [F | _] when $A =< F, $Z =< F -> 2;
+    _ -> get_size(Tracks)
+  end.
+
+get_float(Number) ->
+  case abs(Number - trunc(Number)) of
+    Gap when Gap < 0.0001 -> integer_to_list(trunc(Number));
+    _ -> float_to_list(Number, [{decimals, 1}, compact])
+  end.
